@@ -14,15 +14,19 @@ namespace EmployeesAdminPortal.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
+       
         public EmployeesController(ApplicationDbContext dbContext) { 
         this.dbContext = dbContext;
         }
+
+        //Retreive operation
         [HttpGet]
         public IActionResult GetallEmployees()
         {
             var allEmployees=dbContext.Employees.ToList();
             return Ok(allEmployees);
         }
+        //Create operation
         [HttpGet]
         [Route("{id:guid}")]
         public IActionResult GetEmployeeById(Guid id)
@@ -49,6 +53,27 @@ namespace EmployeesAdminPortal.Controllers
             dbContext.Employees.Add(employeeEntity);
             dbContext.SaveChanges();
             return Ok(employeeEntity);
+        }
+        //lets add update method
+        [HttpPut]
+        [Route("{id:guid}")]
+        public IActionResult UpdateEmployee(Guid id,UpdateEmployeedto updateEmployeedto)
+        {
+            var employee=dbContext.Employees.Find(id);
+            if (employee is null)
+            {
+                return NotFound();
+            }
+            employee.Name = updateEmployeedto.Name;
+            employee.Email=updateEmployeedto.Email;
+            employee.Phone=updateEmployeedto.Phone;
+            employee.Salary=updateEmployeedto.Salary;
+
+            dbContext.SaveChanges();
+            return Ok(employee);
+
+
+
         }
     }
 }
